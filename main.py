@@ -94,7 +94,26 @@ def get_record(logger: Logger, discord_webhook, zone_identifier, record_name, au
         exit()
 
     json_text = json.loads(response.text)
-    return json_text['result'][0]['content']
+    return json_text['result'][0]['content'], json_text['result'][0]['id']
+
+def set_record_ipv4(logger: Logger, zone_identifier, record_name, auth_email, auth_header, auth_key, ipv4, record_id):
+    url = f"https://api.cloudflare.com/client/v4/zones/{zone_identifier}/dns_records/{record_id}"
+
+    headers = {
+        "X-Auth-Email": auth_email,
+        auth_header: auth_key, 
+        "Content-Type": "application/json"
+    }
+
+    data = {
+        "name": record_name,
+        "type": "A",
+        "content": ipv4,
+        "ttl": 3600,
+        "proxied": False
+    }
+
+    response = requests.put(url, headers=headers, data=json.dumps(data))
 
 def send_discord_webhook(logger, discord_webhook, msg):
     if not discord_webhook:
@@ -126,9 +145,10 @@ email_env, zone_identifier_env, record_name_env, \
 
 ipv4 = get_ipv4(logger, urls_env, discord_webhook_env)
 
-record_ipv4 = get_record(logger, discord_webhook_env, zone_identifier_env, record_name_env, email_env, auth_header, api_key_env)
+record_ipv4, record_id = get_record(logger, discord_webhook_env, zone_identifier_env, record_name_env, email_env, auth_header, api_key_env)
 
 if ipv4 != record_ipv4:
     send_discord_webhook(logger, discord_webhook_env, f"🏠local_ipv4: {ipv4} >> 🌎record_ipv4: {record_ipv4}")
+    set_record_ipv4(logger, zone_identifier_env, record_name_env, email_env, auth_header, api_key_env, ipv4, record_id)
 
 logger.info(f"🏠local_ipv4: {ipv4} >> 🌎record_ipv4: {record_ipv4}")
