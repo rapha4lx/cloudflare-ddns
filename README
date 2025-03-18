@@ -5,10 +5,10 @@ This project is a Dynamic DNS (DDNS) client that updates your Cloudflare DNS rec
 
 ## Features
 - Automatically updates Cloudflare DNS records with your current IP address.
-- Support IPv4. 
-- (Soon)Support IPv6.
+- Support for IPv4.
+- Support for IPv6.
 - Simple configuration file for easy setup.
-- Support Discord WebHook for logs
+- Support for Discord WebHook for logs.
 
 ## Requirements
 - Python 3.x
@@ -28,14 +28,15 @@ This project is a Dynamic DNS (DDNS) client that updates your Cloudflare DNS rec
     ```
 
 ## Configuration
-1. Edit .env with your details:
+1. Edit the `.env` file with your details:
     ```sh
     nano .env
     ```
 
-2. Edit `.env` with your Cloudflare API token, zone ID, and DNS record details.
+2. Add your Cloudflare API token, zone ID, and DNS record details to the `.env` file.
 
 ## Usage
-Put DDNS client in crontab:
-
-*/5 * * * * python3 ~/cloudflare-ddns/main.py 
+Add the DDNS client to crontab to run every 5 minutes:
+```sh
+*/5 * * * * python3 ~/cloudflare-ddns/main.py
+```
